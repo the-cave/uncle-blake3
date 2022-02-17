@@ -31,12 +31,12 @@ file lib_name => FileList["#{build_prefix}uncle_blake3.o", "#{build_prefix}#{sta
   static_lib = t.prerequisites.last
   static_lib_dir = ::File.dirname(static_lib)
   static_lib_file = ::File.basename(static_lib)
-  sh "gcc -shared -o #{t.name} #{t.prerequisites.first} -L#{static_lib_dir} -l:#{static_lib_file} -lm -lc"
+  sh "gcc -shared -O3 -flto -o #{t.name} #{t.prerequisites.first} -L#{static_lib_dir} -l:#{static_lib_file} -lm -lc"
 end
 
 file "#{build_prefix}uncle_blake3.o" => FileList['binding/uncle_blake3.c'] do |t|
   ::FileUtils.mkdir_p(::File.dirname(t.name))
-  sh "gcc -O3 -I./blake3/c/ -c #{t.prerequisites.last} -o #{t.name}"
+  sh "gcc -O3 -fPIC -flto -Wall -I./blake3/c/ -c #{t.prerequisites.last} -o #{t.name}"
 end
 
 file "#{build_prefix}#{static_target}" => FileList[
@@ -50,6 +50,6 @@ source_files.each do |source_file|
   object_name = source_file.sub(/(?:\.[cs])?\z/i, '.o')
   file "#{build_prefix}#{object_name}" => FileList["#{blake3_prefix}#{source_file}"] do |t|
     ::FileUtils.mkdir_p(::File.dirname(t.name))
-    sh "gcc -O3 -fPIC -Wall -c #{t.prerequisites.last} -o #{t.name}"
+    sh "gcc -O3 -fPIC -flto -Wall -c #{t.prerequisites.last} -o #{t.name}"
   end
 end
