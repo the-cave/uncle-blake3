@@ -46,7 +46,7 @@ digest << "\x00\x01"
 digest << "\x02\x03"
 digest.hexdigest
 # => "f30f5ab28fe047904037f77b6da4fea1e27241c5d132638d8bedce9d40494f32"
-# `<<` is an alias of `update`, you the one you like
+# `<<` is an alias of `update`, use the one you like
 
 # keyed hash
 digest = ::UncleBlake3::Digest.new(key: 'whats the Elvish word for friend') # the key must be a 32-byte key or UncleBlake will get mad
@@ -54,7 +54,7 @@ digest << "\x00\x01\x02\x03"
 digest.hexdigest
 # => "7671dde590c95d5ac9616651ff5aa0a27bee5913a348e053b8aa9108917fe070"
 
-# use key_seed if you want something like a keyed hash but you have an arbitrary length String to be used as a key
+# use key_seed if you want something like a keyed hash but you have an arbitrary length String as a key
 digest = ::UncleBlake3::Digest.new(key_seed: 'BLAKE3 2019-12-27 16:29:52 test vectors context') # key_seed is the context string in the derive_key mode of Blake3
 digest << "\x00\x01\x02\x03"
 digest.hexdigest
@@ -68,7 +68,7 @@ digest.hexdigest
 ::UncleBlake3::Digest.base64digest("\x00\x01\x02\x03", key_seed: 'BLAKE3 2019-12-27 16:29:52 test vectors context', output_length: 24)
 # => "9GCFyBkNaQIjac4aGIgOmzacE165Pzxj"
 # `digest`, `hexdigest`, and `base64digest` are available as shortcuts and also on `Digest` instances.
-# Same for the options, you may use `key`, `key_seed`, and `output_length` on instance methods and shortcuts
+# Same for the options, you may use `key`, `key_seed`, and `output_length` on both instance methods and shortcuts
 
 # XOF (extendable-output functions)
 digest = ::UncleBlake3::Digest.new(output_length: 64)
@@ -79,8 +79,8 @@ digest.hexdigest
 
 ## Why not Rust binding?
 
-`gcc` is way more common than `rust` compiler.
-Also in a typical Ruby application, we usually don't hash tons of data; mostly just hashing short messages.
+`gcc` is way more common than `rust` compiler.  
+Also in a typical Ruby application, we usually don't hash tons of data; mostly just hashing short messages.  
 In such case, C might me the best choice usability wise and performance wise, due to the fact that it only calculate a single hash on a single thread.
 We won't get multicore boost on a single hash calculation, but with many simultaneous calculation for short inputs, we will get the benefit with less overhead.
 
