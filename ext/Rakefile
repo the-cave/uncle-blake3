@@ -1,0 +1,55 @@
+# frozen_string_literal: true
+
+require 'fileutils'
+require_relative '../lib/uncle_blake3/build'
+
+blake3_prefix = 'blake3/c/'
+build_prefix = 'bin/.build/'
+static_target = 'blake3.a'
+object_list = %w[
+  blake3.o
+  blake3_dispatch.o
+  blake3_portable.o
+  blake3_sse2_x86-64_unix.o
+  blake3_sse41_x86-64_unix.o
+  blake3_avx2_x86-64_unix.o
+  blake3_avx512_x86-64_unix.o
+]
+
+platform = ::UncleBlake3::Build::Platform.instance
+out_dir = "#{platform.arch}-#{platform.os}"
+lib_name = ::File.join(out_dir, platform.map_library_name('UncleBlake3'))
+
+task default: [lib_name]
+
+source_files = ::Dir['**/*', base: blake3_prefix].select do |file|
+  (/\.[cs]\z/i =~ file) && ::File.file?("#{blake3_prefix}#{file}")
+end
+
+file lib_name => FileList["#{build_prefix}uncle_blake3.o", "#{build_prefix}#{static_target}"] do |t|
+  ::FileUtils.mkdir_p(::File.dirname(t.name))
+  static_lib = t.prerequisites.last
+  static_lib_dir = ::File.dirname(static_lib)
+  static_lib_file = ::File.basename(static_lib)
+  sh "gcc -shared -o #{t.name} #{t.prerequisites.first} -L#{static_lib_dir} -l:#{static_lib_file} -lm -lc"
+end
+
+file "#{build_prefix}uncle_blake3.o" => FileList['binding/uncle_blake3.c'] do |t|
+  ::FileUtils.mkdir_p(::File.dirname(t.name))
+  sh "gcc -O3 -I./blake3/c/ -c #{t.prerequisites.last} -o #{t.name}"
+end
+
+file "#{build_prefix}#{static_target}" => FileList[
+  *object_list.map { |object_file| "#{build_prefix}#{object_file}" }
+] do |t|
+  ::FileUtils.mkdir_p(::File.dirname(t.name))
+  sh "ar rcs #{t.name} #{t.prerequisites.join(' ')}"
+end
+
+source_files.each do |source_file|
+  object_name = source_file.sub(/(?:\.[cs])?\z/i, '.o')
+  file "#{build_prefix}#{object_name}" => FileList["#{blake3_prefix}#{source_file}"] do |t|
+    ::FileUtils.mkdir_p(::File.dirname(t.name))
+    sh "gcc -O3 -fPIC -c #{t.prerequisites.last} -o #{t.name}"
+  end
+end
