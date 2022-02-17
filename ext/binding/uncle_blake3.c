@@ -1,10 +1,30 @@
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "blake3.h"
+
+uint16_t UncleBlake3_KEY_LEN() {
+  return (BLAKE3_KEY_LEN);
+}
+
+uint16_t UncleBlake3_OUT_LEN() {
+  return (BLAKE3_OUT_LEN);
+}
 
 void * UncleBlake3_Init() {
   blake3_hasher *retVal = malloc(sizeof (blake3_hasher)); // TODO: check result
-  blake3_hasher_init(retVal); // TODO: check result
+  blake3_hasher_init(retVal);
+  return retVal;
+}
+
+void * UncleBlake3_InitWithKey(const uint8_t *key) {
+  blake3_hasher *retVal = malloc(sizeof (blake3_hasher)); // TODO: check result
+  blake3_hasher_init_keyed(retVal, key);
+  return retVal;
+}
+
+void * UncleBlake3_InitWithKeySeed(const void *context, size_t context_len) {
+  blake3_hasher *retVal = malloc(sizeof (blake3_hasher)); // TODO: check result
+  blake3_hasher_init_derive_key_raw(retVal, context, context_len);
   return retVal;
 }
 

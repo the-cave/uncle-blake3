@@ -1,0 +1,94 @@
+Layout/ArgumentAlignment:
+  Enabled: false
+Layout/ArrayAlignment:
+  Enabled: false
+Layout/BlockAlignment:
+  Enabled: false
+Layout/CaseIndentation:
+  Enabled: false
+Layout/ElseAlignment:
+  Enabled: false
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+Layout/EndAlignment:
+  Enabled: false
+Layout/FirstArgumentIndentation:
+  Enabled: false
+Layout/FirstArrayElementIndentation:
+  Enabled: false
+Layout/FirstHashElementIndentation:
+  Enabled: false
+Layout/HashAlignment:
+  Enabled: false
+Layout/IndentationWidth:
+  Enabled: false
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
+Layout/MultilineOperationIndentation:
+  Enabled: false
+
+Lint/UnderscorePrefixedVariableName:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Metrics/ModuleLength:
+  Enabled: false
+Metrics/ParameterLists:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Naming/ClassAndModuleCamelCase:
+  Enabled: false
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+Naming/MethodParameterName:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+Style/DoubleNegation:
+  Enabled: false
+Style/FormatString:
+  Enabled: false
+Style/IfInsideElse:
+  Enabled: false
+Style/KeywordParametersOrder:
+  Enabled: false
+Style/MultilineBlockChain:
+  Enabled: false
+Style/MultilineIfModifier:
+  Enabled: false
+Style/MultilineTernaryOperator:
+  Enabled: false
+Style/NumericLiterals:
+  Enabled: false
+Style/NumericPredicate:
+  Enabled: false
+Style/ParallelAssignment:
+  Enabled: false
+Style/PercentLiteralDelimiters:
+  Enabled: false
+Style/RaiseArgs:
+  Enabled: false
+Style/SoleNestedConditional:
+  Enabled: false
+Style/SymbolLiteral:
+  Enabled: false
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+Style/YodaCondition:
+  Enabled: false

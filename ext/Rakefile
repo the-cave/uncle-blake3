@@ -50,6 +50,6 @@ source_files.each do |source_file|
   object_name = source_file.sub(/(?:\.[cs])?\z/i, '.o')
   file "#{build_prefix}#{object_name}" => FileList["#{blake3_prefix}#{source_file}"] do |t|
     ::FileUtils.mkdir_p(::File.dirname(t.name))
-    sh "gcc -O3 -fPIC -c #{t.prerequisites.last} -o #{t.name}"
+    sh "gcc -O3 -fPIC -Wall -c #{t.prerequisites.last} -o #{t.name}"
   end
 end
