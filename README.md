@@ -1,5 +1,8 @@
 # UncleBlake3
 
+[![GitHub version](https://badge.fury.io/gh/the-cave%2Funcle-blake3.svg)](https://badge.fury.io/gh/the-cave%2Funcle-blake3)
+[![Gem Version](https://badge.fury.io/rb/uncle_blake3.svg)](https://badge.fury.io/rb/uncle_blake3)
+
 ## What is it?
 
 UncleBlake3 is a Ruby binding of [Blake3](https://github.com/BLAKE3-team/BLAKE3), a fast cryptographic hash function.
@@ -25,9 +28,9 @@ In order to install the gem, your needs:
 
 Add this line to your application's Gemfile:
 
-```ruby
+~~~ruby
 gem 'uncle_blake3'
-```
+~~~
 
 And then execute:
 
@@ -35,7 +38,7 @@ And then execute:
 
 ## Usage Examples
 
-~~~Ruby
+~~~ruby
 # basic usage
 ::UncleBlake3::Digest.hexdigest("\x00")
 # => "2d3adedff11b61f14c886e35afa036736dcd87a74d27b5c1510225d0f592e213"
