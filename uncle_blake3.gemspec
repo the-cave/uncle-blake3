@@ -5,6 +5,7 @@ require_relative 'lib/uncle_blake3/version'
 ::Gem::Specification.new do |spec|
   spec.name = 'uncle_blake3'
   spec.version = ::UncleBlake3::VERSION
+  spec.license = 'BSD-3-Clause'
   spec.author = 'Sarun Rattanasiri'
   spec.email = 'midnight_w@gmx.tw'
 
@@ -15,7 +16,9 @@ require_relative 'lib/uncle_blake3/version'
   spec.required_ruby_version = '>= 2.6.0'
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = "https://github.com/the-cave/uncle-blake3/tree/v#{spec.version}"
+  spec.metadata['source_code_uri'] = "#{spec.homepage}/tree/v#{spec.version}"
+  spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/"
+  spec.metadata['bug_tracker_uri'] = "#{spec.homepage}/issues"
 
   spec.files = [
     *::Dir['lib/**/*'],
@@ -30,6 +33,6 @@ require_relative 'lib/uncle_blake3/version'
   spec.extensions << 'ext/Rakefile'
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'ffi', '~> 1.15.5'
-  spec.add_dependency 'rake', '~> 13.0.6'
+  spec.add_dependency 'ffi', '~> 1.15.0'
+  spec.add_dependency 'rake', '~> 13.0.0'
 end
