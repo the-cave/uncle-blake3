@@ -3,6 +3,7 @@
 require_relative 'build/loader'
 
 module UncleBlake3
+  # @!visibility private
   module Binding
     extend ::FFI::Library
     ffi_lib Build::Loader.find('UncleBlake3')

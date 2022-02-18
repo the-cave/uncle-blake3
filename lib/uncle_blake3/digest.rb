@@ -6,6 +6,13 @@ require 'objspace'
 require_relative 'binding'
 
 module UncleBlake3
+  # @example basic usage
+  #   digest = ::UncleBlake3::Digest.new(output_length: 10)
+  #   digest << 'some input'
+  #   digest << 'some more input'
+  #   digest.hexdigest
+  #   #=> "d709fca62bbf74099e87"
+  # See {file:README.md README} for more usage examples
   class Digest
     KEY_LENGTH = Binding.key_length
     DEFAULT_OUTPUT_LENGTH = Binding.default_output_length
@@ -21,6 +28,7 @@ module UncleBlake3
       include Error
     end
 
+    # Create a new Digest
     def initialize(output_length: DEFAULT_OUTPUT_LENGTH, key: nil, key_seed: nil)
       raise TypeError, 'Hash length is not an Integer' unless output_length.is_a?(::Integer)
       raise ArgumentError, 'Hash length out of range' unless (1...(1 << 20)).include?(output_length)
@@ -49,6 +57,7 @@ module UncleBlake3
       invalidate_cache
     end
 
+    # Feed in the data
     def update(data)
       data_size = data.bytesize
       data_buffer = ::FFI::MemoryPointer.new(:uint8, data_size)
@@ -59,10 +68,12 @@ module UncleBlake3
       invalidate_cache
     end
 
+    # Alias for {#update}
     def <<(*args, **kwargs)
       update(*args, **kwargs)
     end
 
+    # Finalize and output a binary hash
     def digest
       @_digest_cache ||= begin
         data_buffer = ::FFI::MemoryPointer.new(:uint8, @output_length)
@@ -71,10 +82,12 @@ module UncleBlake3
       end
     end
 
+    # Finalize and output a hexadecimal-encoded hash
     def hexdigest
       @_hexdigest_cache ||= digest.unpack1('H*')
     end
 
+    # Finalize and output a Base64-encoded hash
     def base64digest
       @_base64digest_cache ||= ::Base64.strict_encode64(digest)
     end
@@ -88,21 +101,37 @@ module UncleBlake3
     end
 
     class << self
+      # @!visibility private
       # https://www.mikeperham.com/2010/02/24/the-trouble-with-ruby-finalizers/
       def _create_finalizer(instance)
-        proc {
+        proc do
           Binding.destroy(instance)
-        }
+        end
       end
 
+      # Shortcut to calculate a raw digest
+      # @example basic usage
+      #   ::UncleBlake3::Digest.digest('some input')
+      #   #=> "{7\x00\f\x00EZ\xBD \x9A\x9A\x02\xDDH|>({\xC6\xA1\x9DNA\xEB\x81\xC8K\x85\x9E\xBF\x87;"
+      # @example with key derived from seed
+      #   ::UncleBlake3::Digest.digest('some input', key_seed: 'secret')
+      #   #=> "\xA7d\x13c)e\e`>\x9D\e\xB0\x9E\xF9\xA6\x82F:\xA8w;\xB0!\xBC*l\xF3w\x83\x85\xCA\x1E"
+      # @example with raw key (fixed-length key)
+      #   ::UncleBlake3::Digest.digest('some input', key: '0123456789abcdef0123456789abcdef')
+      #   #=> "8Z\x89+\x1A}\x0E\xBBI\xD4)\xC5\x9A\x8A\x17\x13[\xB7\x1DO\x98\xE8\xEF\x06\xD58\x83c\xC3u\x13\xE1"
+      # @example controlled output length
+      #   ::UncleBlake3::Digest.digest('some input', output_length: 5)
+      #   #=> "{7\x00\f\x00"
       def digest(*args, **kwargs)
         _generic_digest(*args, **kwargs, &:digest)
       end
 
+      # Same as {.digest} but encode the output in hexadecimal format
       def hexdigest(*args, **kwargs)
         _generic_digest(*args, **kwargs, &:hexdigest)
       end
 
+      # Same as {.digest} but encode the output in Base64 format
       def base64digest(*args, **kwargs)
         _generic_digest(*args, **kwargs, &:base64digest)
       end
