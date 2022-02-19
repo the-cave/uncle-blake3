@@ -30,6 +30,7 @@ require_relative 'lib/uncle_blake3/version'
     'ext/Rakefile',
     'README.md',
     'LICENSE.md',
+    '.yardopts',
   ]
   spec.extensions << 'ext/Rakefile'
   spec.require_paths = ['lib']
