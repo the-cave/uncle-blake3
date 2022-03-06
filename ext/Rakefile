@@ -3,20 +3,45 @@
 require 'fileutils'
 require_relative '../lib/uncle_blake3/build'
 
+platform = ::UncleBlake3::Build::Platform.instance
+
 blake3_prefix = 'blake3/c/'
 build_prefix = 'bin/.build/'
 static_target = 'blake3.a'
-object_list = %w[
-  blake3.o
-  blake3_dispatch.o
-  blake3_portable.o
-  blake3_sse2_x86-64_unix.o
-  blake3_sse41_x86-64_unix.o
-  blake3_avx2_x86-64_unix.o
-  blake3_avx512_x86-64_unix.o
+object_list = [
+  # base
+  'blake3.o', 'blake3_dispatch.o', 'blake3_portable.o',
+  # extensions
+  *if platform.arch == 'aarch64'
+    ['blake3_neon.o']
+  elsif %w[x86_64 i386].include?(platform.arch)
+    case platform.os
+    when 'windows'
+      %w[
+        blake3_sse2_x86-64_windows_gnu.o
+        blake3_sse41_x86-64_windows_gnu.o
+        blake3_avx2_x86-64_windows_gnu.o
+        blake3_avx512_x86-64_windows_gnu.o
+      ]
+    else
+      %w[
+        blake3_sse2_x86-64_unix.o
+        blake3_sse41_x86-64_unix.o
+        blake3_avx2_x86-64_unix.o
+        blake3_avx512_x86-64_unix.o
+      ]
+    end
+  else
+    []
+  end
 ]
+neon_flag = if object_list.include?('blake3_neon.o')
+  'BLAKE3_USE_NEON=1'
+else
+  'BLAKE3_USE_NEON=0'
+end
+cflags = "-D#{neon_flag}"
 
-platform = ::UncleBlake3::Build::Platform.instance
 out_dir = "#{platform.arch}-#{platform.os}"
 lib_name = ::File.join(out_dir, platform.map_library_name('UncleBlake3'))
 
@@ -31,12 +56,12 @@ file lib_name => FileList["#{build_prefix}uncle_blake3.o", "#{build_prefix}#{sta
   static_lib = t.prerequisites.last
   static_lib_dir = ::File.dirname(static_lib)
   static_lib_file = ::File.basename(static_lib)
-  sh "gcc -shared -O3 -flto -o #{t.name} #{t.prerequisites.first} -L#{static_lib_dir} -l:#{static_lib_file} -lm -lc"
+  sh "gcc -shared -O3 -flto -Wall #{cflags} -o #{t.name} #{t.prerequisites.first} -L#{static_lib_dir} -l:#{static_lib_file} -lm -lc"
 end
 
 file "#{build_prefix}uncle_blake3.o" => FileList['binding/uncle_blake3.c'] do |t|
   ::FileUtils.mkdir_p(::File.dirname(t.name))
-  sh "gcc -O3 -fPIC -flto -Wall -I./blake3/c/ -c #{t.prerequisites.last} -o #{t.name}"
+  sh "gcc -O3 -fPIC -flto -Wall #{cflags} -I./blake3/c/ -c #{t.prerequisites.last} -o #{t.name}"
 end
 
 file "#{build_prefix}#{static_target}" => FileList[
@@ -50,6 +75,6 @@ source_files.each do |source_file|
   object_name = source_file.sub(/(?:\.[cs])?\z/i, '.o')
   file "#{build_prefix}#{object_name}" => FileList["#{blake3_prefix}#{source_file}"] do |t|
     ::FileUtils.mkdir_p(::File.dirname(t.name))
-    sh "gcc -O3 -fPIC -flto -Wall -c #{t.prerequisites.last} -o #{t.name}"
+    sh "gcc -O3 -fPIC -flto -Wall #{cflags} -c #{t.prerequisites.last} -o #{t.name}"
   end
 end
