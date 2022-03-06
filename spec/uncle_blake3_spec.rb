@@ -11,9 +11,9 @@ RSpec.describe ::UncleBlake3::Digest do
     gen_input = lambda do |length|
       ::Enumerator.new do |yielder|
         loop do
-          yielder << (0..250).each
+          yielder << (0..250)
         end
-      end.lazy.flat_map(&:to_a).lazy.map(&:chr).take(length).to_a.join
+      end.lazy.flat_map(&:lazy).map(&:chr).take(length).to_a.join
     end
 
     test_cases.each do |test_case|
